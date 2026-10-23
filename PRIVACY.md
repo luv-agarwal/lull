@@ -12,4 +12,4 @@ Lull collects nothing.
 
 Permissions and why: `declarativeNetRequest` (block sites), `storage` (your list and stats), `alarms` (schedules and 5-minute passes), `activeTab` (block the site you are on).
 
-Questions: open an issue on the project's GitHub page.
+Questions: open an issue at https://github.com/luv-agarwal/lull/issues.
