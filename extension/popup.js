@@ -1,7 +1,8 @@
-import { loadState, saveSites, requestAccess } from './lib/store.js';
+import { loadState, saveSites, requestAccess, loadTree } from './lib/store.js';
 import { toHost, siteFor, matchEntry, mergeSites, isAllowed } from './lib/domains.js';
 import { activeFilter } from './lib/rules.js';
 import { isActive, activeUntil } from './lib/schedule.js';
+import { treeSVG, groveSVG, STAGE_NAMES } from './lib/art.js';
 
 const $ = (id) => document.getElementById(id);
 const BLOCK_URL = chrome.runtime.getURL('blocked.html');
@@ -23,6 +24,14 @@ else if (activeCount) {
   const live = state.schedules.filter((s) => isActive(s, now)).map((s) => s.name);
   status.textContent = 'Blocking' + (live.length ? ' · ' + live[0] : '');
 } else status.textContent = 'Off hours';
+
+if (state.settings.tree) {
+  const t = await loadTree();
+  $('mini').hidden = false;
+  $('mini-art').innerHTML = treeSVG(t.stage, { fallen: t.fallen, size: 30 });
+  $('mini-text').innerHTML = `<b>Day ${t.days}</b> · ${STAGE_NAMES[t.stage]}`;
+  $('mini-grove').innerHTML = groveSVG(t.grove, 6);
+}
 
 for (const s of state.schedules) $('sched').add(new Option(s.name, s.id));
 $('sched-row').hidden = !state.schedules.length;

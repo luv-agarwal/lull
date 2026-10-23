@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Lull — calm site blocker",
   "short_name": "Lull",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Block distracting sites with focus schedules and a gentle 5-minute pass. Nothing runs inside the pages you visit.",
   "minimum_chrome_version": "120",
   "permissions": [

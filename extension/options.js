@@ -1,4 +1,4 @@
-import { loadState, saveSites, saveAllow, saveSchedules, saveSettings, clearStats, dayKey, requestAccess, sitesWithoutAccess } from './lib/store.js';
+import { loadState, saveSites, saveAllow, saveSchedules, saveSettings, clearStats, dayKey, resumeTree, requestAccess, sitesWithoutAccess } from './lib/store.js';
 import { parseInput, parseList, formatList, mergeSites, entryKey } from './lib/domains.js';
 import { activeFilter } from './lib/rules.js';
 import { isActive, activeUntil, describe, DAY_LETTERS } from './lib/schedule.js';
@@ -214,6 +214,11 @@ $('clear-stats').onclick = async () => { if (confirm('Clear all stats?')) await 
 
 // ---------- block page + strict ----------
 $('line').addEventListener('change', (e) => saveSettings({ line: e.target.value.trim() || 'Not now.' }));
+$('tree-on').addEventListener('change', async (e) => {
+  if (e.target.checked) await resumeTree();
+  await saveSettings({ tree: e.target.checked });
+});
+$('quotes-on').addEventListener('change', (e) => saveSettings({ quotes: e.target.checked }));
 $('strict-on').addEventListener('change', async (e) => {
   if (!e.target.checked && locked()) { e.target.checked = true; return; }
   await saveSettings({ strict: e.target.checked });
@@ -261,6 +266,8 @@ async function renderMeta() {
   pill.classList.toggle('on', !!on);
   $('strict-bar').hidden = !state.settings.strict;
   $('strict-on').checked = state.settings.strict;
+  $('tree-on').checked = state.settings.tree;
+  $('quotes-on').checked = state.settings.quotes;
   if (document.activeElement !== $('line')) $('line').value = state.settings.line;
   const { lastRebuild: r } = await chrome.storage.local.get('lastRebuild');
   if (r?.error) { $('perf').textContent = `Could not update blocking rules: ${r.error}`; return; }

@@ -185,6 +185,45 @@ try {
   check('blocked domain redirects to the block page with the full URL', href === `${BLOCK}http://blocked.test:${PORT}/watch?v=1`, href);
   const shown = await evaluate(tab.sessionId, `document.getElementById('domain')?.textContent`);
   check('block page shows the domain', shown === 'blocked.test', shown);
+
+  // 1b. Tree and quote on the block page
+  const treeNow = () => evaluate(tab.sessionId, `(() => ({
+    label: document.querySelector('#tree-art svg')?.getAttribute('aria-label'),
+    cap: document.getElementById('tree-cap').textContent,
+    quote: document.getElementById('quote').hidden ? null : document.getElementById('quote').textContent,
+    fallen: !!document.querySelector('#tree-art .fall'),
+    grove: document.getElementById('grove').hidden ? null : document.getElementById('grove').textContent,
+  }))()`);
+  let tv = await treeNow();
+  check('block page: a new tree is a seed', tv.label === 'Seed' && tv.cap === 'Day 0 · Seed', JSON.stringify(tv));
+  check('block page: shows a quote', !!tv.quote && tv.quote.length > 5, tv.quote);
+  const yesterday = await swEval(`const d = new Date(); d.setDate(d.getDate() - 1); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0')`);
+  await swEval(`await chrome.storage.local.set({ tree: { through: '${yesterday}', days: 9, run: 0, leafWeek: '', leafDay: '', grove: 2, last: null } })`);
+  const quotes = new Set([tv.quote]);
+  for (let i = 0; i < 3; i++) {
+    await go(tab, `http://blocked.test:${PORT}/watch?v=${i + 2}`);
+    tv = await treeNow();
+    quotes.add(tv.quote);
+  }
+  check('block page: day 9 draws a young tree', tv.label === 'Young tree' && tv.cap === 'Day 9 · Young tree' && !tv.fallen, JSON.stringify(tv));
+  check('block page: grove of 2 shows', tv.grove === '2 trees in your grove', tv.grove);
+  check('block page: the line changes between visits', quotes.size >= 3, `${quotes.size} different lines in 4 visits`);
+  const bpPerf = await evaluate(tab.sessionId, `(async () => {
+    const long = await new Promise((r) => {
+      const seen = [];
+      new PerformanceObserver((l) => seen.push(...l.getEntries())).observe({ type: 'longtask', buffered: true });
+      setTimeout(() => r(seen.map((e) => Math.round(e.duration))), 300);
+    });
+    const nav = performance.getEntriesByType('navigation')[0];
+    return { long, loadMs: Math.round(nav.loadEventEnd) };
+  })()`);
+  check('block page: no long task over 50 ms', bpPerf.long.every((d) => d <= 50), `load ${bpPerf.loadMs} ms, long tasks: ${JSON.stringify(bpPerf.long)}`);
+  await shot(tab, 'block-tree');
+  await setSync({ settings: { passMinutes: 0.5, quotes: false } });
+  await go(tab, `http://blocked.test:${PORT}/q-off`);
+  tv = await treeNow();
+  check('quotes switched off: no line', tv.quote === null, tv.quote);
+  await setSync({ settings: { passMinutes: 0.5 } });
   href = await go(tab, `http://deep.sub.blocked.test:${PORT}/`);
   check('subdomain is blocked', href.startsWith(BLOCK), href);
   href = await go(tab, `http://only.exact.test:${PORT}/`);
@@ -226,6 +265,9 @@ try {
   check('pass covers subdomains', href === `http://www.blocked.test:${PORT}/`, href);
   const passes = await swEval(`return (await chrome.storage.local.get('passes')).passes`);
   check('pass is counted', Object.values(passes || {})[0] === 1, JSON.stringify(passes));
+  await go(tab, `${BLOCK}http://blocked.test:${PORT}/after-leaf`);
+  tv = await treeNow();
+  check('first pass of the week: one leaf down, still day 9', tv.fallen && tv.cap === 'Day 9 · Young tree · one leaf down, still your tree', JSON.stringify(tv));
 
   // 4. Schedule edge applied by the alarm (no storage change involved)
   const now = new Date();
@@ -307,10 +349,12 @@ try {
   href = await go(tab, `chrome-extension://${extId}/popup.html`);
   const popupHost = await evaluate(tab.sessionId, `document.getElementById('host').textContent`);
   check('popup renders', popupHost === 'This page', popupHost);
+  const mini = await evaluate(tab.sessionId, `document.getElementById('mini').hidden ? null : document.getElementById('mini-text').textContent`);
+  check('popup shows the mini tree', mini === 'Day 9 · Young tree', mini);
   await shot(tab, 'popup', 330, 260);
 
   // 7. Block page weight
-  const files = ['blocked.html', 'blocked.css', 'blocked.js', 'lib/store.js', 'lib/domains.js', 'lib/access.js', 'lib/rules.js', 'lib/schedule.js', 'icons/icon32.png'];
+  const files = ['blocked.html', 'blocked.css', 'tree.css', 'blocked.js', 'lib/store.js', 'lib/tree.js', 'lib/art.js', 'lib/quotes.js', 'lib/domains.js', 'lib/access.js', 'lib/rules.js', 'lib/schedule.js', 'icons/icon32.png'];
   const bytes = files.reduce((a, f) => a + statSync(join(EXT, f)).size, 0);
   check('block page under 50 KB', bytes < 50 * 1024, `${(bytes / 1024).toFixed(1)} KB across ${files.length} files`);
 

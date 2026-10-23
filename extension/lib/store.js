@@ -4,11 +4,14 @@
 
 import { encodeSites, decodeSites } from './domains.js';
 import { neededOrigins, accessChecker } from './access.js';
+import { settle, view, newTree, addDays } from './tree.js';
 
 export const DEFAULT_SETTINGS = {
   line: 'Not now. You chose this for a reason.',
   strict: false,
   passMinutes: 5,
+  tree: true,
+  quotes: true,
 };
 
 export async function loadState() {
@@ -65,6 +68,22 @@ export async function countPass() {
   const { passes = {} } = await chrome.storage.local.get('passes');
   passes[dayKey()] = (passes[dayKey()] || 0) + 1;
   await chrome.storage.local.set({ passes: prune(passes) });
+}
+
+// Settle the tree up to yesterday, save it if anything changed, return what to draw.
+export async function loadTree() {
+  const today = dayKey();
+  const { tree, passes = {} } = await chrome.storage.local.get(['tree', 'passes']);
+  const next = settle(tree, passes, today);
+  if (next !== tree) await chrome.storage.local.set({ tree: next });
+  return view(next, passes[today] || 0, today);
+}
+
+// After the tree was switched off, it starts again where it stopped, from today.
+export async function resumeTree() {
+  const { tree } = await chrome.storage.local.get('tree');
+  const today = dayKey();
+  await chrome.storage.local.set({ tree: tree ? { ...tree, through: addDays(today, -1) } : newTree(today) });
 }
 
 export const clearStats = () => chrome.storage.local.remove(['stats', 'passes']);

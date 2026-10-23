@@ -6,13 +6,20 @@
 <title>Resting — Lull</title>
 <link rel="icon" href="icons/icon32.png">
 <link rel="stylesheet" href="blocked.css">
+<link rel="stylesheet" href="tree.css">
 <script type="module" src="blocked.js"></script>
 </head>
 <body>
 <main>
-  <div class="dot" aria-hidden="true"><span></span></div>
+  <div id="dot" class="dot" aria-hidden="true"><span></span></div>
+  <div id="tree" class="tree-box" hidden>
+    <div id="tree-art" class="tree-art"></div>
+    <p id="tree-cap" class="cap"></p>
+    <div id="grove" class="grove-row" hidden></div>
+  </div>
   <h1 id="domain"></h1>
   <p id="line" class="line"></p>
+  <p id="quote" class="quote" hidden></p>
   <button id="hold" class="hold" hidden>
     <span class="fill" aria-hidden="true"></span>
     <b id="hold-label">Hold for a 5-minute pass</b><small id="hold-hint">3 s</small>

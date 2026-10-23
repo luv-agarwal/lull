@@ -1,0 +1,17 @@
+:root {
+  --trunk: #8a6a4f; --leaf: #6a9a7d; --leaf-2: #4b7560; --soil: #d6cab5; --fall: #c98a3d; --bloom: #f3dccb;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --trunk: #a88a70; --leaf: #7fb399; --leaf-2: #5a8a74; --soil: #4a4238; --fall: #d9a25a; --bloom: #e9c7b4; }
+}
+.tree .gr { fill: var(--soil); opacity: .55; }
+.tree .soil { fill: var(--soil); }
+.tree .tk, .grove .tk { fill: var(--trunk); }
+.tree .st { fill: none; stroke: var(--trunk); stroke-width: 2.2; stroke-linecap: round; }
+.tree .lf, .grove .lf { fill: var(--leaf); }
+.tree .lf2 { fill: var(--leaf-2); }
+.tree .bl { fill: var(--bloom); }
+.tree .fall { fill: var(--fall); }
+.tree .sway { transform-origin: 60px 100px; animation: sway 9s ease-in-out infinite; }
+@keyframes sway { 0%, 100% { transform: rotate(-1.1deg); } 50% { transform: rotate(1.1deg); } }
+@media (prefers-reduced-motion: reduce) { .tree .sway { animation: none; } }
