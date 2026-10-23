@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lull settings</title>
+<link rel="icon" href="icons/icon32.png">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="options.css">
+<script type="module" src="options.js"></script>
+</head>
+<body>
+<nav>
+  <div class="brand"><img src="icons/icon48.png" alt="" width="22" height="22"> Lull</div>
+  <a href="#sites">Sites</a>
+  <a href="#exceptions">Exceptions</a>
+  <a href="#schedules">Schedules</a>
+  <a href="#stats">Stats</a>
+  <a href="#blockpage">Block page</a>
+  <a href="#strict">Strict mode</a>
+  <a href="#io">Import / export</a>
+  <p id="state-pill" class="pill"></p>
+</nav>
+<main>
+  <div id="strict-bar" class="strict-bar" hidden>
+    <span>Strict mode is on. Adding sites is instant; removing or loosening waits 60 seconds.</span>
+    <button id="unlock" class="btn ghost">Unlock edits</button>
+  </div>
+
+  <section id="sites">
+    <h2>Sites</h2>
+    <p class="muted">Each site blocks its subdomains too. Paste as many as you like — one per line, or separated by commas or spaces. Chrome asks once per add to let Lull show its block page on those sites; Lull never gets access to any other site.</p>
+    <div class="adder">
+      <textarea id="add-text" rows="1" placeholder="youtube.com, x.com, reddit.com" aria-label="Sites to block"></textarea>
+      <select id="add-sched" aria-label="Schedule"><option value="">Always</option></select>
+      <label class="check"><input type="checkbox" id="add-exact"> Exact host only</label>
+      <button id="add" class="btn">Add</button>
+    </div>
+    <p id="add-msg" class="msg"></p>
+    <div id="access-bar" class="access-bar" hidden>
+      <span id="access-text"></span>
+      <button id="access-allow" class="btn ghost">Allow</button>
+    </div>
+    <div class="list-tools">
+      <input type="text" id="filter" placeholder="Filter…" aria-label="Filter sites">
+      <span id="count" class="muted"></span>
+    </div>
+    <ul id="list" class="list"></ul>
+  </section>
+
+  <section id="exceptions">
+    <h2>Exceptions</h2>
+    <p class="muted">Never blocked, even inside a blocked site — for example <code>music.youtube.com</code> while <code>youtube.com</code> is blocked.</p>
+    <div class="adder">
+      <textarea id="allow-text" rows="1" placeholder="music.youtube.com" aria-label="Exceptions"></textarea>
+      <button id="allow-add" class="btn">Add exception</button>
+    </div>
+    <p id="allow-msg" class="msg"></p>
+    <ul id="allow-list" class="list"></ul>
+  </section>
+
+  <section id="schedules">
+    <h2>Schedules</h2>
+    <p class="muted">Sites set to "Always" block all the time. A site on a focus window blocks only inside it; outside it Lull removes the rule completely.</p>
+    <div id="sched-list"></div>
+    <button id="sched-add" class="btn ghost">+ Add focus window</button>
+  </section>
+
+  <section id="stats">
+    <h2>Stats <span class="muted small">last 7 days, stored only on this computer</span></h2>
+    <div class="stats">
+      <div>
+        <div id="bars" class="bars"></div>
+        <p id="stat-sum" class="muted small"></p>
+      </div>
+      <ol id="top" class="top"></ol>
+    </div>
+    <button id="clear-stats" class="btn danger">Clear stats</button>
+  </section>
+
+  <section id="blockpage">
+    <h2>Block page</h2>
+    <label class="field">Line shown under the site
+      <input type="text" id="line" maxlength="140">
+    </label>
+    <p class="small"><a href="blocked.html#https://example.com/" target="_blank">Preview the block page →</a></p>
+  </section>
+
+  <section id="strict">
+    <h2>Strict mode</h2>
+    <label class="check big"><input type="checkbox" id="strict-on"> Turn on strict mode</label>
+    <p class="muted">Hides the 5-minute pass. Removing a site, adding an exception, editing a schedule or turning strict mode off first needs a 60-second wait.</p>
+  </section>
+
+  <section id="io">
+    <h2>Import / export</h2>
+    <p class="muted">Plain text, one site per line. <code>=host</code> blocks only that exact host, <code>!host</code> is an exception, <code>site @Schedule name</code> assigns a schedule.</p>
+    <textarea id="io-text" rows="6" placeholder="Paste a list here, or choose a file"></textarea>
+    <div class="row-gap">
+      <button id="import" class="btn">Add to my list</button>
+      <label class="btn ghost file">Choose file<input type="file" id="io-file" accept=".txt,text/plain" hidden></label>
+      <button id="export" class="btn ghost">Download my list</button>
+      <button id="copy" class="btn ghost">Copy my list</button>
+    </div>
+    <p id="io-msg" class="msg"></p>
+  </section>
+
+  <footer class="muted small">
+    <p>Lull works inside Chrome only. It makes no network requests, has no analytics and adds nothing to the pages you visit. Your list syncs through your own Chrome sync; stats stay on this computer.</p>
+    <p id="perf"></p>
+  </footer>
+</main>
+</body>
+</html>

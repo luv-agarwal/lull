@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="popup.css">
+<script type="module" src="popup.js"></script>
+</head>
+<body>
+<header class="row">
+  <span class="brand"><img src="icons/icon32.png" alt="" width="16" height="16"> Lull</span>
+  <span id="status" class="pill"></span>
+</header>
+<section class="cur">
+  <div id="host" class="mono">…</div>
+  <div id="sub" class="muted small"></div>
+</section>
+<div id="actions">
+  <div id="sched-row" class="row small" hidden>
+    <label for="sched" class="muted">When</label>
+    <select id="sched"><option value="">Always</option></select>
+  </div>
+  <button id="block" class="btn wide">Block this site</button>
+  <button id="exact" class="btn ghost wide" hidden>Block only this exact host</button>
+  <button id="unblock" class="btn ghost wide" hidden>Unblock</button>
+</div>
+<footer class="row small muted">
+  <span id="shortcut"></span>
+  <a href="#" id="open-options">Settings →</a>
+</footer>
+</body>
+</html>

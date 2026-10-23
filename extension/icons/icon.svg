@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs><clipPath id="sky"><rect x="0" y="0" width="128" height="76"/></clipPath></defs>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="#4f7a6b"/>
+  <circle cx="64" cy="76" r="30" fill="#f6f4ef" clip-path="url(#sky)"/>
+  <rect x="26" y="86" width="76" height="9" rx="4.5" fill="#f6f4ef" opacity="0.9"/>
+</svg>

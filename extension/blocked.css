@@ -1,0 +1,39 @@
+:root {
+  color-scheme: light dark;
+  --bg: #f6f4ef; --ink: #26231f; --muted: #7a736a; --line: #e2ddd3; --panel: #fffdf9;
+  --accent: #4f7a6b; --accent-soft: #e3ece8;
+  font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #171614; --ink: #ece8e1; --muted: #9a938a; --line: #34312c; --panel: #201f1c;
+          --accent: #8fbfae; --accent-soft: #23302b; }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); display: grid; place-items: center; }
+main { text-align: center; padding: 24px; max-width: 560px; }
+.dot { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 26px; background: var(--accent-soft);
+       display: grid; place-items: center; }
+.dot span { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); opacity: .85;
+            animation: breathe 6s ease-in-out infinite; }
+@keyframes breathe { 50% { transform: scale(1.35); opacity: .55; } }
+@media (prefers-reduced-motion: reduce) { .dot span { animation: none; } }
+h1 { font: 600 clamp(22px, 4vw, 30px)/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; margin: 0 0 8px;
+     overflow-wrap: anywhere; }
+.line { color: var(--muted); font-size: 17px; margin: 0 0 34px; }
+.hold { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 12px;
+        border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 999px;
+        padding: 11px 22px; font: inherit; font-size: 14px; cursor: pointer; user-select: none;
+        -webkit-user-select: none; touch-action: none; }
+.hold:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.hold b, .hold small { position: relative; font-weight: 500; }
+.hold small { color: var(--muted); }
+.fill { position: absolute; inset: 0; width: 0; background: var(--accent-soft); transition: width .25s ease-out; }
+.hold.holding .fill { width: 100%; transition: width 3s linear; }
+.hold.done .fill { width: 100%; }
+.meta { margin-top: 22px; font-size: 13px; color: var(--muted); min-height: 1.5em; }
+.settings { position: fixed; right: 18px; bottom: 14px; font-size: 12px; color: var(--muted); text-decoration: none; }
+.settings:hover { color: var(--ink); }
+.access { font-size: 12px; color: var(--muted); margin-top: 10px; }
+.link { border: 0; background: none; color: var(--accent); font: inherit; padding: 0; cursor: pointer; text-decoration: underline; }

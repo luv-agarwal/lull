@@ -1,0 +1,13 @@
+{
+  "name": "lull",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Calm Chrome site blocker. No dependencies, no build step.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "pack": "sh scripts/pack.sh",
+    "verify": "node scripts/verify-chrome.mjs"
+  }
+}
